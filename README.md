@@ -1,4 +1,35 @@
-# Minecraft Server Manager
+# Minecraft Effektsteuerung (Node-RED Flow)
+
+Dieser Node-RED Flow ermöglicht es, Minecraft-Spielern über eine Web-Dashboard-Oberfläche Effekte zuzuweisen – inklusive Effektstärke, -dauer und LED-Farbanzeige via MQTT.
+
+## Funktionen
+
+- Spielerauswahl aus dem aktiven Server
+- Dropdown-Auswahl für Minecraft-Effekte
+- Slider für Dauer und Stärke
+- LED-Ansteuerung per MQTT
+- Effekt-Auslösung per Button
+- RCON-Integration für direkte Minecraft-Befehle
+
+## Voraussetzungen
+
+- Ein laufender Minecraft-Server mit RCON aktiviert
+- Node-RED
+- MQTT-Broker (z. B. Mosquitto)
+- Verbundene LED-Installation (z. B. WS2812 per ESP32)
+
+## Installation
+
+1. Starte Node-RED
+2. Importiere `flows.json` über das Menü
+3. Stelle sicher, dass RCON- und MQTT-Verbindungen korrekt konfiguriert sind
+4. Rufe das Dashboard auf und teste die Steuerung
+
+## Hinweise
+
+- RCON-Passwort und IP-Adresse im Flow anpassen (`serverconfig`)
+- MQTT-Broker-Details im Flow unter `mqtt-broker` ändern
+
 
 ## Project Goal
 
