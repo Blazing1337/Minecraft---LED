@@ -4,11 +4,7 @@
 
 Create a web-based management interface for Minecraft servers that allows administrators to monitor player activity, execute commands, and manage server resources through an intuitive dashboard. This project aims to simplify Minecraft server administration for educational environments.
 
-## Timeline
 
-- **Phase 1 (Current)**: Core functionality - Server status, player listing, and basic RCON commands
-- **Phase 2 (April 2025)**: Advanced features - Player management, world backups, and server performance monitoring
-- **Phase 3 (June 2025)**: User management, permissions, and mobile-responsive design
 
 ## Quick Start
 
