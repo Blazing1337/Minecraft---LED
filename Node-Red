@@ -1,0 +1,604 @@
+[
+    {
+        "id": "1f1151d3e1556330",
+        "type": "tab",
+        "label": "Minecraft Effektsteuerung",
+        "disabled": false
+    },
+    {
+        "id": "6f7b3a824b0767a6",
+        "type": "inject",
+        "z": "1f1151d3e1556330",
+        "name": "Starte Datenabfrage",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 130,
+        "y": 260,
+        "wires": [
+            [
+                "b4ce91194ca8fca9"
+            ]
+        ]
+    },
+    {
+        "id": "b4ce91194ca8fca9",
+        "type": "serverinfo",
+        "z": "1f1151d3e1556330",
+        "name": "Hole Spielerinfo",
+        "server": "20ae6a051935915d",
+        "x": 220,
+        "y": 320,
+        "wires": [
+            [
+                "d876a324ed05647f"
+            ]
+        ]
+    },
+    {
+        "id": "d876a324ed05647f",
+        "type": "function",
+        "z": "1f1151d3e1556330",
+        "name": "Spielernamen als Optionen",
+        "func": "let players = msg.payload.players || [];\nif (!Array.isArray(players)) players = [];\nmsg.options = players.map(p => ({ [p.name]: p.name }));\nreturn msg;",
+        "outputs": 1,
+        "x": 200,
+        "y": 400,
+        "wires": [
+            [
+                "1cda131734543b72"
+            ]
+        ]
+    },
+    {
+        "id": "1cda131734543b72",
+        "type": "ui_dropdown",
+        "z": "1f1151d3e1556330",
+        "name": "Spieler Dropdown",
+        "label": "Spieler",
+        "place": "Wähle Spieler",
+        "group": "e35ff536d10aad0d",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [],
+        "payload": "",
+        "topic": "player",
+        "x": 450,
+        "y": 380,
+        "wires": [
+            [
+                "f2184ad16764598d",
+                "f378babf5ce333f6"
+            ]
+        ]
+    },
+    {
+        "id": "b85602a69b03a26e",
+        "type": "ui_slider",
+        "z": "1f1151d3e1556330",
+        "name": "Effekt-Stärke",
+        "label": "Stärke",
+        "group": "e35ff536d10aad0d",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "all",
+        "topic": "amplifier",
+        "min": 1,
+        "max": 255,
+        "step": 1,
+        "x": 430,
+        "y": 220,
+        "wires": [
+            [
+                "f2184ad16764598d",
+                "e9dd4971cf1b02f3"
+            ]
+        ]
+    },
+    {
+        "id": "07adffc7ce7cd63d",
+        "type": "ui_slider",
+        "z": "1f1151d3e1556330",
+        "name": "Effekt-Dauer",
+        "label": "Dauer (Sekunden)",
+        "group": "e35ff536d10aad0d",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "all",
+        "topic": "duration",
+        "min": 1,
+        "max": 100000,
+        "step": 1,
+        "x": 430,
+        "y": 300,
+        "wires": [
+            [
+                "f2184ad16764598d",
+                "939d50ad2a8d8bf4"
+            ]
+        ]
+    },
+    {
+        "id": "f050df168cce1423",
+        "type": "function",
+        "z": "1f1151d3e1556330",
+        "name": "Effekt → LED Farbe",
+        "func": "const effect = msg.payload;\n\n// Mapping für bekannte Effekte mit Farbe (RGB)\nconst colors = {\n    \"minecraft:speed\":            { r: 255, g: 255, b: 255 },\n    \"minecraft:haste\":            { r: 252, g: 233, b: 79 },\n    \"minecraft:jump_boost\":       { r: 0, g: 255, b: 127 },\n    \"minecraft:night_vision\":     { r: 50, g: 205, b: 50 },\n    \"minecraft:regeneration\":     { r: 255, g: 20, b: 147 },\n    \"minecraft:hero_of_the_village\": { r: 127, g: 255, b: 0 },\n    \"minecraft:strength\":         { r: 255, g: 0, b: 0 },\n    \"minecraft:invisibility\":     { r: 128, g: 128, b: 128 },\n    \"minecraft:fire_resistance\":  { r: 255, g: 69, b: 0 },\n    \"minecraft:water_breathing\":  { r: 0, g: 191, b: 255 },\n    \"minecraft:poison\":           { r: 85, g: 107, b: 47 },\n    \"minecraft:wither\":           { r: 30, g: 30, b: 30 }\n    // Du kannst hier beliebig viele Farben hinzufügen\n};\n\n// Fallback-Farbe\nconst color = colors[effect] || { r: 0, g: 0, b: 0 };  // Fallback: aus\n\n// Erstelle ein Array von 16 LEDs in dieser Farbe\nmsg.payload = Array(16).fill(color);\n\n// Setze explizit das Topic\nmsg.topic = \"led\";\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 60,
+        "wires": [
+            [
+                "abeaee38054e4da8",
+                "76de40e984390090"
+            ]
+        ]
+    },
+    {
+        "id": "f2184ad16764598d",
+        "type": "join",
+        "z": "1f1151d3e1556330",
+        "name": "Spieler + Effekt + Dauer + Stärke",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": true,
+        "count": "4",
+        "x": 800,
+        "y": 300,
+        "wires": [
+            [
+                "b8d95b682f7c1730"
+            ]
+        ]
+    },
+    {
+        "id": "b8d95b682f7c1730",
+        "type": "function",
+        "z": "1f1151d3e1556330",
+        "name": "Erstelle Effekt-Befehl",
+        "func": "const { player, effect, duration = 60, amplifier = 1 } = msg.payload;\nmsg.payload = `/effect give ${player} ${effect} ${duration} ${amplifier}`;\nreturn msg;",
+        "outputs": 1,
+        "x": 1120,
+        "y": 320,
+        "wires": [
+            [
+                "65251d084ababf20"
+            ]
+        ]
+    },
+    {
+        "id": "65251d084ababf20",
+        "type": "rcon",
+        "z": "1f1151d3e1556330",
+        "name": "Sende an Minecraft",
+        "server": "20ae6a051935915d",
+        "x": 1410,
+        "y": 320,
+        "wires": [
+            [
+                "ecc87ed117bd3a6d"
+            ]
+        ]
+    },
+    {
+        "id": "ecc87ed117bd3a6d",
+        "type": "debug",
+        "z": "1f1151d3e1556330",
+        "name": "Debug",
+        "active": true,
+        "tosidebar": true,
+        "complete": "payload",
+        "x": 1630,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "abeaee38054e4da8",
+        "type": "mqtt out",
+        "z": "1f1151d3e1556330",
+        "name": "MQTT → LED",
+        "topic": "led",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "cc5ebf21519fc92b",
+        "x": 860,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "4325d5a495fae9ee",
+        "type": "ui_dropdown",
+        "z": "1f1151d3e1556330",
+        "name": "Effekte Dropdown",
+        "label": "Effekte",
+        "tooltip": "",
+        "place": "Wähle Effekt",
+        "group": "e35ff536d10aad0d",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Speed",
+                "value": "minecraft:speed",
+                "type": "str"
+            },
+            {
+                "label": "Slowness",
+                "value": "minecraft:slowness",
+                "type": "str"
+            },
+            {
+                "label": "Haste",
+                "value": "minecraft:haste",
+                "type": "str"
+            },
+            {
+                "label": "Mining Fatigue",
+                "value": "minecraft:mining_fatigue",
+                "type": "str"
+            },
+            {
+                "label": "Strength",
+                "value": "minecraft:strength",
+                "type": "str"
+            },
+            {
+                "label": "Instant Health",
+                "value": "minecraft:instant_health",
+                "type": "str"
+            },
+            {
+                "label": "Instant Damage",
+                "value": "minecraft:instant_damage",
+                "type": "str"
+            },
+            {
+                "label": "Jump Boost",
+                "value": "minecraft:jump_boost",
+                "type": "str"
+            },
+            {
+                "label": "Nausea",
+                "value": "minecraft:nausea",
+                "type": "str"
+            },
+            {
+                "label": "Regeneration",
+                "value": "minecraft:regeneration",
+                "type": "str"
+            },
+            {
+                "label": "Resistance",
+                "value": "minecraft:resistance",
+                "type": "str"
+            },
+            {
+                "label": "Fire Resistance",
+                "value": "minecraft:fire_resistance",
+                "type": "str"
+            },
+            {
+                "label": "Water Breathing",
+                "value": "minecraft:water_breathing",
+                "type": "str"
+            },
+            {
+                "label": "Invisibility",
+                "value": "minecraft:invisibility",
+                "type": "str"
+            },
+            {
+                "label": "Blindness",
+                "value": "minecraft:blindness",
+                "type": "str"
+            },
+            {
+                "label": "Night Vision",
+                "value": "minecraft:night_vision",
+                "type": "str"
+            },
+            {
+                "label": "Hunger",
+                "value": "minecraft:hunger",
+                "type": "str"
+            },
+            {
+                "label": "Weakness",
+                "value": "minecraft:weakness",
+                "type": "str"
+            },
+            {
+                "label": "Poison",
+                "value": "minecraft:poison",
+                "type": "str"
+            },
+            {
+                "label": "Wither",
+                "value": "minecraft:wither",
+                "type": "str"
+            },
+            {
+                "label": "Health Boost",
+                "value": "minecraft:health_boost",
+                "type": "str"
+            },
+            {
+                "label": "Absorption",
+                "value": "minecraft:absorption",
+                "type": "str"
+            },
+            {
+                "label": "Saturation",
+                "value": "minecraft:saturation",
+                "type": "str"
+            },
+            {
+                "label": "Glowing",
+                "value": "minecraft:glowing",
+                "type": "str"
+            },
+            {
+                "label": "Levitation",
+                "value": "minecraft:levitation",
+                "type": "str"
+            },
+            {
+                "label": "Luck",
+                "value": "minecraft:luck",
+                "type": "str"
+            },
+            {
+                "label": "Unluck",
+                "value": "minecraft:unluck",
+                "type": "str"
+            },
+            {
+                "label": "Slow Falling",
+                "value": "minecraft:slow_falling",
+                "type": "str"
+            },
+            {
+                "label": "Conduit Power",
+                "value": "minecraft:conduit_power",
+                "type": "str"
+            },
+            {
+                "label": "Dolphin's Grace",
+                "value": "minecraft:dolphins_grace",
+                "type": "str"
+            },
+            {
+                "label": "Bad Omen",
+                "value": "minecraft:bad_omen",
+                "type": "str"
+            },
+            {
+                "label": "Hero of the Village",
+                "value": "minecraft:hero_of_the_village",
+                "type": "str"
+            },
+            {
+                "label": "Darkness",
+                "value": "minecraft:darkness",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "effect",
+        "topicType": "str",
+        "className": "",
+        "x": 310,
+        "y": 120,
+        "wires": [
+            [
+                "f050df168cce1423",
+                "f2184ad16764598d"
+            ]
+        ]
+    },
+    {
+        "id": "5a808b773f06e9a8",
+        "type": "ui_button",
+        "z": "1f1151d3e1556330",
+        "name": "Effekt senden Button",
+        "group": "e35ff536d10aad0d",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Effekt anwenden",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "send",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 320,
+        "y": 480,
+        "wires": [
+            [
+                "e6476c438632a4ae",
+                "8042d7f8ca56a074"
+            ]
+        ]
+    },
+    {
+        "id": "e6476c438632a4ae",
+        "type": "function",
+        "z": "1f1151d3e1556330",
+        "name": "Sammle Werte für Join",
+        "func": "const effect = flow.get('effect') || 'minecraft:speed';\nconst duration = flow.get('duration') || 60;\nconst amplifier = flow.get('amplifier') || 1;\nconst player = flow.get('player');\nif (!player) return null;\n\nreturn [\n  { topic: 'effect', payload: effect },\n  { topic: 'duration', payload: duration },\n  { topic: 'amplifier', payload: amplifier },\n  { topic: 'player', payload: player }\n];",
+        "outputs": 1,
+        "x": 550,
+        "y": 480,
+        "wires": [
+            [
+                "f2184ad16764598d"
+            ]
+        ]
+    },
+    {
+        "id": "76de40e984390090",
+        "type": "debug",
+        "z": "1f1151d3e1556330",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "e9dd4971cf1b02f3",
+        "type": "debug",
+        "z": "1f1151d3e1556330",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "939d50ad2a8d8bf4",
+        "type": "debug",
+        "z": "1f1151d3e1556330",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "f378babf5ce333f6",
+        "type": "debug",
+        "z": "1f1151d3e1556330",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "8042d7f8ca56a074",
+        "type": "debug",
+        "z": "1f1151d3e1556330",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "20ae6a051935915d",
+        "type": "serverconfig",
+        "host": "tome.lu",
+        "rconPort": 25575,
+        "rconPassword": "teinf"
+    },
+    {
+        "id": "e35ff536d10aad0d",
+        "type": "ui_group",
+        "name": "Group 2",
+        "tab": "a3aff7f13aa5b198",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "cc5ebf21519fc92b",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "tome.lu",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "a3aff7f13aa5b198",
+        "type": "ui_tab",
+        "name": "Tab 2",
+        "icon": "dashboard",
+        "order": 2
+    }
+]
