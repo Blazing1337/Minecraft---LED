@@ -1,59 +1,150 @@
-Minecraft-Effektsteuerung mit Node-RED
-Node-RED Logo
+# Minecraft Server Manager
 
-Ein Node-RED Flow zur Steuerung von Minecraft-Effekten über eine benutzerfreundliche Dashboard-Oberfläche.
+## Project Goal
 
-📖 Übersicht
-Dieses Projekt ermöglicht es, Spielern auf einem Minecraft-Server Effekte (wie Speed, Jump Boost, Invisibility) mit variabler Dauer und Stärke über Node-RED zuzuweisen. Zusätzlich visualisiert eine LED-Leiste den ausgewählten Effekt.
+Create a web-based management interface for Minecraft servers that allows administrators to monitor player activity, execute commands, and manage server resources through an intuitive dashboard. This project aims to simplify Minecraft server administration for educational environments.
 
-🔌 Funktionsweise
-Spielerdaten abrufen: Der Flow holt die aktuelle Spielerliste vom Minecraft-Server.
+## Timeline
 
-Effekt konfigurieren:
+- **Phase 1 (Current)**: Core functionality - Server status, player listing, and basic RCON commands
+- **Phase 2 (April 2025)**: Advanced features - Player management, world backups, and server performance monitoring
+- **Phase 3 (June 2025)**: User management, permissions, and mobile-responsive design
 
-Effekt-Typ aus Dropdown auswählen.
+## Quick Start
 
-Dauer und Stärke per Slider anpassen.
+### Prerequisites
 
-Befehl senden: Der generierte /effect give-Befehl wird via RCON an den Server gesendet.
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
+- Git
 
-LED-Feedback: Eine RGB-LED-Stripe (16 LEDs) zeigt die Farbe des ausgewählten Effekts an.
+### Deployment
 
-🛠 Installation
-Voraussetzungen
-Minecraft-Server mit aktiviertem RCON (Port: 25575).
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/schto173/minecraft-manager.git
+   cd minecraft-manager
+   ```
 
-Node-RED (lokal oder auf einem Server installiert).
+2. Create an environment file:
+   ```bash
+   cp .env.example .env
+   ```
 
-MQTT-Broker (z.B. Mosquitto) für die LED-Ansteuerung.
+3. Edit the `.env` file with your Minecraft server details:
+   ```
+   MC_HOST=minecraft
+   MC_PORT=25565
+   RCON_PORT=25575
+   RCON_PASSWORD=your_secure_password
+   ```
 
-Hardware: RGB-LED-Stripe (z.B. WS2812B) mit Controller (z.B. ESP8266).
+4. Start the application with Docker Compose:
+   ```bash
+   docker compose up -d
+   ```
 
-Schritte
-Flow importieren:
+5. Access the web interface at `http://localhost:3000`
 
-Kopiere den Flow-JSON-Code und importiere ihn in Node-RED über Menu → Import → Clipboard.
+### Standalone Deployment (without Docker)
 
-Konfiguration anpassen:
+1. Install Node.js (v16 or later) and npm
 
-RCON-Verbindung: Host, Port und Passwort in serverconfig-Node eintragen.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-MQTT-Broker: Daten im mqtt-broker-Node hinterlegen.
+3. Create and configure the `.env` file as shown above
 
-Dashboard aufrufen:
+4. Start the application:
+   ```bash
+   npm start
+   ```
 
-Öffne die Node-RED-UI unter http://<deine-ip>:1880/ui.
+## Docker Compose Configuration
 
-🖥️ Hardware
-Komponente	Beschreibung
-Minecraft-Server	Beliebig (PaperMC, Spigot, etc.)
-Node-RED Host	Raspberry Pi, Server, oder lokaler PC
-LED-Stripe	WS2812B (16 LEDs)
-Controller	ESP8266 (mit WLED oder ähnlich)
-📸 Screenshots
-(Füge hier Bilder des Node-RED-Flows und des Dashboards ein!)
+The included `docker-compose.yml` sets up both the Minecraft server and web application:
 
-❓ Hilfe
-RCON-Probleme? Prüfe die Server-server.properties (Einstellung enable-rcon=true).
+```yaml
+version: '3'
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: "TRUE"
+      RCON_PASSWORD: "${RCON_PASSWORD}"
+      ENABLE_RCON: "true"
+    volumes:
+      - ./minecraft-data:/data
+    restart: unless-stopped
 
-LEDs reagieren nicht? Stelle sicher, dass der MQTT-Broker erreichbar ist.
+  webapp:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - MC_HOST=minecraft
+      - MC_PORT=25565
+      - RCON_PORT=25575
+      - RCON_PASSWORD=${RCON_PASSWORD}
+    depends_on:
+      - minecraft
+    restart: unless-stopped
+```
+
+## Updating
+
+To update the application:
+
+1. Pull the latest changes:
+   ```bash
+   git pull
+   ```
+
+2. Rebuild and restart the containers:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+## Troubleshooting
+
+### Connection Issues
+
+If the web app can't connect to the Minecraft server:
+
+1. Verify the RCON password matches in both environments
+2. Ensure the Minecraft server is fully started
+3. Check logs: `docker compose logs minecraft`
+
+### Port Conflicts
+
+If you encounter port conflicts:
+
+1. Edit the `docker-compose.yml` file to change the exposed ports
+2. Update the `.env` file to match the new ports
+
+## Project Structure
+
+```
+minecraft-manager/
+├── website                # Code for Website deployment
+├── docker-compose.yml     # Docker Compose configuration
+└── .env.example           # Environment variables template
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed information on how to contribute to this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [minecraft-server-util](https://github.com/PassTheMayo/minecraft-server-util) for server status queries
+- [rcon-client](https://github.com/janispritzkau/rcon-client) for RCON communication
+- [itzg/minecraft-server](https://github.com/itzg/docker-minecraft-server) for the Minecraft server Docker image
