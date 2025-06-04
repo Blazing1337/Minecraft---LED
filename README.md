@@ -1,6 +1,6 @@
 # 🧱 Minecraft Effect Control Dashboard (Node-RED + Docker)
 
-![Minecraft Effect Control Interface](https://via.placeholder.com/1000x400.png?text=Minecraft+Effect+Dashboard+Preview)
+
 
 A **web-based management dashboard** for Minecraft servers, built using **Node-RED**, with integration for **RCON**, **MQTT-controlled LEDs**, and a streamlined UI for assigning in-game effects to players.
 
