@@ -1,103 +1,80 @@
-# Minecraft Effect Control (Node-RED Flow)
-This Node-RED flow allows Minecraft players to assign effects via a web dashboard interface – including effect strength, duration, and LED color display via MQTT.
+# 🧱 Minecraft Effect Control Dashboard (Node-RED + Docker)
 
-## Features
-Player selection from the active server
+![Minecraft Effect Control Interface](https://via.placeholder.com/1000x400.png?text=Minecraft+Effect+Dashboard+Preview)
 
-Dropdown menu for Minecraft effects
+A **web-based management dashboard** for Minecraft servers, built using **Node-RED**, with integration for **RCON**, **MQTT-controlled LEDs**, and a streamlined UI for assigning in-game effects to players.
 
-Sliders for effect duration and strength
+## 🚀 Features
 
-LED control via MQTT
+- ✅ Real-time player list from the active Minecraft server  
+- 🎮 Effect assignment UI – choose effect, strength, and duration  
+- 🌈 LED control via MQTT for immersive visual feedback (e.g., WS2812 LEDs)  
+- 🔘 Trigger effects with a button  
+- ⚙️ RCON integration for secure in-game command execution  
+- 📊 Built-in Node-RED Dashboard interface  
 
-Effect trigger via button
+## 📦 Requirements
 
-RCON integration for direct Minecraft commands
+- A Minecraft server with RCON enabled  
+- Node-RED  
+- An MQTT broker (e.g., Mosquitto)  
+- Connected LED hardware (e.g., ESP32 + WS2812)  
+- Docker & Docker Compose (optional but recommended)
 
-## Requirements
-A running Minecraft server with RCON enabled
+## 🎯 Project Goal
 
-Node-RED
+Create an intuitive, visual interface for Minecraft server administrators — especially in **educational** or **STEM learning environments** — enabling simplified effect control, monitoring, and automation through modern web tools.
 
-MQTT broker (e.g., Mosquitto)
+## ⚙️ Quick Start
 
-Connected LED setup (e.g., WS2812 via ESP32)
+### 🔧 Prerequisites
 
-## Installation
-Start Node-RED
+- [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)  
+- [Git](https://git-scm.com/)
 
-Import flows.json via the menu
+## 🐳 Deployment via Docker
 
-Ensure RCON and MQTT connections are configured correctly
+```bash
+git clone https://github.com/schto173/minecraft-manager.git
+cd minecraft-manager
+cp .env.example .env
+```
 
-Open the dashboard and test the control system
+Edit `.env`:
 
-## Notes
-Adjust RCON password and IP address in the flow (serverconfig)
+```
+MC_HOST=minecraft
+MC_PORT=25565
+RCON_PORT=25575
+RCON_PASSWORD=your_secure_password
+```
 
-Modify MQTT broker details in the flow under mqtt-broker
+Start services:
 
+```bash
+docker compose up -d
+```
 
-## Project Goal
+Access the web interface:  
+📍 http://localhost:3000
 
-Create a web-based management interface for Minecraft servers that allows administrators to monitor player activity, execute commands, and manage server resources through an intuitive dashboard. This project aims to simplify Minecraft server administration for educational environments.
+## 🖥️ Standalone (No Docker)
 
-
-
-## Quick Start
-
-### Prerequisites
-
-- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
-- Git
-
-### Deployment
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/schto173/minecraft-manager.git
-   cd minecraft-manager
-   ```
-
-2. Create an environment file:
-   ```bash
-   cp .env.example .env
-   ```
-
-3. Edit the `.env` file with your Minecraft server details:
-   ```
-   MC_HOST=minecraft
-   MC_PORT=25565
-   RCON_PORT=25575
-   RCON_PASSWORD=your_secure_password
-   ```
-
-4. Start the application with Docker Compose:
-   ```bash
-   docker compose up -d
-   ```
-
-5. Access the web interface at `http://localhost:3000`
-
-### Standalone Deployment (without Docker)
-
-1. Install Node.js (v16 or later) and npm
-
+1. Install Node.js (v16+) and `npm`  
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
 
-3. Create and configure the `.env` file as shown above
+```bash
+npm install
+```
 
-4. Start the application:
-   ```bash
-   npm start
-   ```
+3. Configure `.env`  
+4. Run:
 
-## Docker Compose Configuration
+```bash
+npm start
+```
 
-The included `docker-compose.yml` sets up both the Minecraft server and web application:
+## 🧩 Docker Compose Configuration
 
 ```yaml
 version: '3'
@@ -108,8 +85,8 @@ services:
       - "25565:25565"
     environment:
       EULA: "TRUE"
-      RCON_PASSWORD: "${RCON_PASSWORD}"
       ENABLE_RCON: "true"
+      RCON_PASSWORD: "${RCON_PASSWORD}"
     volumes:
       - ./minecraft-data:/data
     restart: unless-stopped
@@ -128,57 +105,50 @@ services:
     restart: unless-stopped
 ```
 
-## Updating
+## 🔄 Updating
 
-To update the application:
+```bash
+git pull
+docker compose down
+docker compose up -d
+```
 
-1. Pull the latest changes:
-   ```bash
-   git pull
-   ```
+## 🧰 Troubleshooting
 
-2. Rebuild and restart the containers:
-   ```bash
-   docker compose down
-   docker compose up -d
-   ```
+### ❌ Connection Issues
 
-## Troubleshooting
+- Ensure RCON password matches in all configs  
+- Wait until the Minecraft server is fully initialized  
+- Check logs:  
 
-### Connection Issues
+```bash
+docker compose logs minecraft
+```
 
-If the web app can't connect to the Minecraft server:
+### 🔁 Port Conflicts
 
-1. Verify the RCON password matches in both environments
-2. Ensure the Minecraft server is fully started
-3. Check logs: `docker compose logs minecraft`
+- Adjust exposed ports in `docker-compose.yml`  
+- Update `.env` accordingly  
 
-### Port Conflicts
-
-If you encounter port conflicts:
-
-1. Edit the `docker-compose.yml` file to change the exposed ports
-2. Update the `.env` file to match the new ports
-
-## Project Structure
+## 🗂️ Project Structure
 
 ```
 minecraft-manager/
-├── website                # Code for Website deployment
-├── docker-compose.yml     # Docker Compose configuration
-└── .env.example           # Environment variables template
+├── website               # Frontend (dashboard)
+├── docker-compose.yml   # Docker orchestration
+└── .env.example         # Environment config template
 ```
 
-## Contributing
+## 🤝 Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed information on how to contribute to this project.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
-## License
+## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Licensed under the [MIT License](LICENSE).
 
-## Acknowledgments
+## 🙌 Acknowledgments
 
-- [minecraft-server-util](https://github.com/PassTheMayo/minecraft-server-util) for server status queries
-- [rcon-client](https://github.com/janispritzkau/rcon-client) for RCON communication
-- [itzg/minecraft-server](https://github.com/itzg/docker-minecraft-server) for the Minecraft server Docker image
+- [minecraft-server-util](https://github.com/PassTheMayo/minecraft-server-util)  
+- [rcon-client](https://github.com/janispritzkau/rcon-client)  
+- [itzg/minecraft-server](https://github.com/itzg/docker-minecraft-server)
