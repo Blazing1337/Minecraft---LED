@@ -1,34 +1,41 @@
-# Minecraft Effektsteuerung (Node-RED Flow)
+# Minecraft Effect Control (Node-RED Flow)
+This Node-RED flow allows Minecraft players to assign effects via a web dashboard interface – including effect strength, duration, and LED color display via MQTT.
 
-Dieser Node-RED Flow ermöglicht es, Minecraft-Spielern über eine Web-Dashboard-Oberfläche Effekte zuzuweisen – inklusive Effektstärke, -dauer und LED-Farbanzeige via MQTT.
+## Features
+Player selection from the active server
 
-## Funktionen
+Dropdown menu for Minecraft effects
 
-- Spielerauswahl aus dem aktiven Server
-- Dropdown-Auswahl für Minecraft-Effekte
-- Slider für Dauer und Stärke
-- LED-Ansteuerung per MQTT
-- Effekt-Auslösung per Button
-- RCON-Integration für direkte Minecraft-Befehle
+Sliders for effect duration and strength
 
-## Voraussetzungen
+LED control via MQTT
 
-- Ein laufender Minecraft-Server mit RCON aktiviert
-- Node-RED
-- MQTT-Broker (z. B. Mosquitto)
-- Verbundene LED-Installation (z. B. WS2812 per ESP32)
+Effect trigger via button
+
+RCON integration for direct Minecraft commands
+
+## Requirements
+A running Minecraft server with RCON enabled
+
+Node-RED
+
+MQTT broker (e.g., Mosquitto)
+
+Connected LED setup (e.g., WS2812 via ESP32)
 
 ## Installation
+Start Node-RED
 
-1. Starte Node-RED
-2. Importiere `flows.json` über das Menü
-3. Stelle sicher, dass RCON- und MQTT-Verbindungen korrekt konfiguriert sind
-4. Rufe das Dashboard auf und teste die Steuerung
+Import flows.json via the menu
 
-## Hinweise
+Ensure RCON and MQTT connections are configured correctly
 
-- RCON-Passwort und IP-Adresse im Flow anpassen (`serverconfig`)
-- MQTT-Broker-Details im Flow unter `mqtt-broker` ändern
+Open the dashboard and test the control system
+
+## Notes
+Adjust RCON password and IP address in the flow (serverconfig)
+
+Modify MQTT broker details in the flow under mqtt-broker
 
 
 ## Project Goal
